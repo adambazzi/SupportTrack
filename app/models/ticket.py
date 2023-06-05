@@ -16,6 +16,7 @@ class Ticket(db.Model):
     heading = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(200), nullable=False)
+    status_summary = db.Column(db.String(500))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
@@ -28,12 +29,12 @@ class Ticket(db.Model):
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'name': self.name,
+            'heading': self.heading,
             'description': self.description,
-            'status': self.status
+            'status': self.status,
+            'status_summary': self.status_summary
         }
 
     # Define Relationships
     # Define a many-to-one relationship with Tickets
     user = db.relationship('User', back_populates='tickets')
-

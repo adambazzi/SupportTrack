@@ -13,9 +13,9 @@ def camel_to_snake(name):
 
 ticket_routes = Blueprint('tickets', __name__)
 
-# GET route to retrieve all jobs and clients
+# GET route to retrieve all tickets and users
 @ticket_routes.route('/tickets-users', methods=['GET'])
-def get_job_client_info():
+def get_ticket_user_info():
     # Use joinedload() to perform an eager load of Job and Users
     result = db.session.query(Ticket).options(joinedload(Ticket.user)).all()
 
@@ -25,33 +25,61 @@ def get_job_client_info():
         ticket_data = {
             'ticket_id': ticket.id,
             'user_id': ticket.user_id,
-            'name': ticket.name,
-            'description': ticket.description
-
+            'ticket_heading': ticket.heading,
+            'ticket_description': ticket.description,
+            'ticket_status': ticket.status,
+            'user_email': ticket.user.email,
+            'user_first_name': ticket.user.first_name,
+            'user_last_name': ticket.user.last_name
         }
         data.append(ticket_data)
 
     return jsonify(data), 200
 
-# POST route to create a new job
-@job_routes.route('/job', methods=['POST'])
-def create_job():
+# POST route to create a new ticket
+@ticket_routes.route('/ticket', methods=['POST'])
+def create_ticket():
     data = request.get_json()
 
     snake_case_data = {camel_to_snake(k): v for k, v in data.items()}
 
-    form = new_job_form(data=snake_case_data)
+    form = new_ticket_form(data=snake_case_data)
 
     if form.validate():
-        new_job = Job(**form.data)
+        new_ticket = Ticket(**form.data)
 
-        db.session.add(new_job)
+        db.session.add(new_ticket)
         try:
             db.session.commit()
-            return jsonify({'message': 'Job created successfully', 'job_id': new_job.id}), 201
+            return jsonify({'message': 'Ticket created successfully', 'ticket_id': new_ticket.id}), 201
         except IntegrityError:
             db.session.rollback()
-            return jsonify({'message': 'Job creation failed'}), 400
+            return jsonify({'message': 'Ticket creation failed'}), 400
 
     else:
         return jsonify(form.errors), 400
+
+# PUT route to revise ticket status (for admins only)
+@ticket_routes.route('/ticket', methods=['POST'])
+def revise_ticket(ticket_id):
+    data = request.get_json()
+
+    snake_case_data = {camel_to_snake(k): v for k, v in data.items()}
+
+    # Get the ticket by its id
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return jsonify({'message': 'Ticket not found'}), 404
+
+    # Update status and status_summary if provided in the request
+    if 'status' in snake_case_data:
+        ticket.status = snake_case_data['status']
+    if 'status_summary' in snake_case_data:
+        ticket.status_summary = snake_case_data['status_summary']
+
+    try:
+        db.session.commit()
+        return jsonify({'message': 'Ticket updated successfully'}), 200
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({'message': 'Ticket update failed'}), 400
