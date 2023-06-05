@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 from app.models import Ticket
 from app import db
 from sqlalchemy.exc import IntegrityError
-from forms import new_ticket_form
+from app.forms import new_ticket_form
 import re
 
 def camel_to_snake(name):
