@@ -1,0 +1,9 @@
+.admin_ticket {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .admin_ticket > div {
+    margin-bottom: 5px;
+  }

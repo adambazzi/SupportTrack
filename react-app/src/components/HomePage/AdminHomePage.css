@@ -1,0 +1,31 @@
+.homePage__admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .homePage__admin > div {
+    margin-bottom: 10px;
+  }
+
+  .allTickets,
+  .openTickets,
+  .inProgressTickets,
+  .closedTickets {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+  }
+
+  .allTickets > .admin_ticket,
+  .openTickets > .admin_ticket,
+  .inProgressTickets > .admin_ticket,
+  .closedTickets > .admin_ticket {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .ticket_button.selected {
+    background-color: gray;
+  }

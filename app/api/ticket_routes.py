@@ -28,6 +28,7 @@ def get_ticket_user_info():
             'ticket_heading': ticket.heading,
             'ticket_description': ticket.description,
             'ticket_status': ticket.status,
+            'ticket_status_summary': ticket.status_summary,
             'user_email': ticket.user.email,
             'user_first_name': ticket.user.first_name,
             'user_last_name': ticket.user.last_name
@@ -60,7 +61,7 @@ def create_ticket():
         return jsonify(form.errors), 400
 
 # PUT route to revise ticket status (for admins only)
-@ticket_routes.route('/ticket', methods=['POST'])
+@ticket_routes.route('/<int:ticketId>', methods=['PUT'])
 def revise_ticket(ticket_id):
     data = request.get_json()
 
