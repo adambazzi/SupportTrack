@@ -1,9 +1,13 @@
-from .db import db, environment, SCHEMA, add_prefix_for_prod
+from .db import db, environment, SCHEMA
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.schema import CheckConstraint
 from flask_login import UserMixin
+from sqlalchemy import text
+import re  # importing re module
+
 
 class User(db.Model, UserMixin):
+    """A User model that stores user information and handles password hashing."""
     __tablename__ = 'users'
 
     if environment == "production":
@@ -18,19 +22,20 @@ class User(db.Model, UserMixin):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
-
     # Check constraints for basic email and phone validation
     __table_args__ = (
-        CheckConstraint('email ~* \'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$\'', name='email_check'),
-        CheckConstraint('phone ~* \'^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?\'', name='phone_check'),
+        CheckConstraint(text("email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
+        CheckConstraint(text("phone REGEXP '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
     )
 
     @property
     def password(self):
+        """Prevent password from being accessed."""
         raise AttributeError("Password attribute is not readable.")
 
     @password.setter
     def password(self, password):
+        """Set password to a hashed password."""
         # Password complexity check
         pattern = re.compile(
             r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
@@ -43,17 +48,25 @@ class User(db.Model, UserMixin):
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
+        """Check if hashed password matches with the provided password."""
         return check_password_hash(self.hashed_password, password)
 
     def to_dict(self):
+        """Return user details as a dict."""
         return {
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'certifications': [certification.to_dict() for certification in self.certifications]
+            'phone': self.phone,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'admin': self.admin
         }
 
-    # Define Relationships
+    def __repr__(self):
+        """Represent instance of a User."""
+        return f"<User: {self.username}>"
 
+    # Define Relationships
     # Define a one-to-many relationship with Tickets for user
     tickets = db.relationship('Ticket', back_populates='user')
