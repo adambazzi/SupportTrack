@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import { editTicket } from "../../store/tickets";
 import { useModal } from "../../context/Modal";
 
-function AdminEditTicketModal({ ticket }) {
-  const [status, setStatus] = useState(ticket.status);
-  const [statusSummary, setStatusSummary] = useState(ticket.status_summary || '')
+function AdminEditTicketModal({ ticket, refreshTickets }) {
+  const [status, setStatus] = useState(ticket.ticket_status || 'Open');
+  const [statusSummary, setStatusSummary] = useState(ticket.ticket_status_summary || '')
   const { closeModal } = useModal();
   const [disableButton, setDisableButton] = useState(false)
 
@@ -24,11 +24,12 @@ function AdminEditTicketModal({ ticket }) {
     const data = {
       status,
       statusSummary,
-      ticketId: ticket.id
+      ticketId: ticket.ticket_id
     }
 
     await editTicket(data);
 
+    refreshTickets();
     closeModal();
 
   };
@@ -38,10 +39,10 @@ function AdminEditTicketModal({ ticket }) {
     <h1 className='edit-ticket__heading'>Edit Ticket</h1>
     <form onSubmit={handleSubmit} className='edit-ticket__form'>
         <label for="dropdown">Select an option:</label>
-        <select id="dropdown" name="dropdown" onChange={(e) => setStatus(e.target.value)}>
+        <select id="dropdown" name="dropdown" onChange={(e) => setStatus(e.target.value)} value={status}>
             <option value="Open">Open</option>
             <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
+            <option value="Closed">Completed</option>
         </select>
       <input
         type="text"

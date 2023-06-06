@@ -11,19 +11,19 @@ function AdminHomePage() {
   const [currentView, setCurrentView] = useState('All');
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getTickets();
-        setTickets(data);
-        setOpenTickets(data.filter(el => el.ticket_status === 'Open'));
-        setInProgressTickets(data.filter(el => el.ticket_status === 'In Progress'));
-        setClosedTickets(data.filter(el => el.ticket_status === 'Closed'));
-      } catch (error) {
-        setError(error.message);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const data = await getTickets();
+      setTickets(data);
+      setOpenTickets(data.filter(el => el.ticket_status === 'Open'));
+      setInProgressTickets(data.filter(el => el.ticket_status === 'In Progress'));
+      setClosedTickets(data.filter(el => el.ticket_status === 'Closed'));
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -63,28 +63,28 @@ function AdminHomePage() {
         {currentView === 'All' && (
             <div className="allTickets">
                 {tickets.length > 0 && tickets.map((ticket) => (
-                    <AdminTicketComponent key={ticket.id} ticket={ticket} />
+                    <AdminTicketComponent key={ticket.id} ticket={ticket} refreshTickets={fetchData} />
                 ))}
             </div>
         )}
         {currentView === 'Open Tickets' && (
             <div className="openTickets">
                 {openTickets.length > 0 && openTickets.map((ticket) => (
-                    <AdminTicketComponent key={ticket.id} ticket={ticket} />
+                    <AdminTicketComponent key={ticket.id} ticket={ticket} refreshTickets={fetchData} />
                 ))}
             </div>
         )}
         {currentView === 'In Progress' && (
             <div className="inProgressTickets">
                 {inProgressTickets.length > 0 && inProgressTickets.map((ticket) => (
-                    <AdminTicketComponent key={ticket.id} ticket={ticket} />
+                    <AdminTicketComponent key={ticket.id} ticket={ticket} refreshTickets={fetchData} />
                 ))}
             </div>
         )}
         {currentView === 'Closed Tickets' && (
             <div className="closedTickets">
                 {closedTickets.length > 0 && closedTickets.map((ticket) => (
-                    <AdminTicketComponent key={ticket.id} ticket={ticket} />
+                    <AdminTicketComponent key={ticket.id} ticket={ticket} refreshTickets={fetchData} />
                 ))}
             </div>
         )}

@@ -62,13 +62,13 @@ def create_ticket():
 
 # PUT route to revise ticket status (for admins only)
 @ticket_routes.route('/<int:ticketId>', methods=['PUT'])
-def revise_ticket(ticket_id):
+def revise_ticket(ticketId):
     data = request.get_json()
 
     snake_case_data = {camel_to_snake(k): v for k, v in data.items()}
 
     # Get the ticket by its id
-    ticket = Ticket.query.get(ticket_id)
+    ticket = Ticket.query.get(ticketId)
     if not ticket:
         return jsonify({'message': 'Ticket not found'}), 404
 

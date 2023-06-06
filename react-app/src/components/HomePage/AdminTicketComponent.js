@@ -4,7 +4,7 @@ import AdminEditTicketModal from "./AdminEditTicketModal";
 import OpenModalButton from "../OpenModalButton";
 
 
-function AdminTicketComponent({ ticket }) {
+function AdminTicketComponent({ ticket, refreshTickets }) {
     const [showMenu, setShowMenu] = useState(false);
     const ulRef = useRef();
 
@@ -36,7 +36,7 @@ function AdminTicketComponent({ ticket }) {
         <OpenModalButton
                 buttonText="Edit"
                 onItemClick={closeMenu}
-                modalComponent={<AdminEditTicketModal ticket={ticket} />}
+                modalComponent={<AdminEditTicketModal ticket={ticket} refreshTickets={refreshTickets} />}
         />
 
     </div>
