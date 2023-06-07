@@ -23,10 +23,10 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
 
     # Check constraints for basic email and phone validation
-    # __table_args__ = (
-    #     CheckConstraint(text("email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
-    #     CheckConstraint(text("phone REGEXP '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
-    # )
+    __table_args__ = (
+        CheckConstraint(text("email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
+        CheckConstraint(text("phone REGEXP '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
+    )
 
     @property
     def password(self):
