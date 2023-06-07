@@ -3,8 +3,10 @@ from sqlalchemy.orm import joinedload
 from app.models import Ticket
 from app import db
 from sqlalchemy.exc import IntegrityError
-from app.forms import new_ticket_form
+from app.forms import TicketForm
 import re
+from werkzeug.datastructures import MultiDict
+
 
 def camel_to_snake(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -17,7 +19,7 @@ ticket_routes = Blueprint('tickets', __name__)
 @ticket_routes.route('/tickets-users', methods=['GET'])
 def get_ticket_user_info():
     # Use joinedload() to perform an eager load of Job and Users
-    result = db.session.query(Ticket).options(joinedload(Ticket.user)).all()
+    result = db.session.query(Ticket).options(joinedload(Ticket.user)).order_by(Ticket.created_at.desc()).all()
 
     # Convert query result to list of dictionaries to make it serializable
     data = []
@@ -31,34 +33,41 @@ def get_ticket_user_info():
             'ticket_status_summary': ticket.status_summary,
             'user_email': ticket.user.email,
             'user_first_name': ticket.user.first_name,
-            'user_last_name': ticket.user.last_name
+            'user_last_name': ticket.user.last_name,
+            'updated_at': ticket.updated_at,
+            'created_at': ticket.created_at
         }
         data.append(ticket_data)
 
     return jsonify(data), 200
 
 # POST route to create a new ticket
-@ticket_routes.route('/ticket', methods=['POST'])
+# POST route to create a new ticket
+@ticket_routes.route('', methods=['POST'])
 def create_ticket():
     data = request.get_json()
-
     snake_case_data = {camel_to_snake(k): v for k, v in data.items()}
 
-    form = new_ticket_form(data=snake_case_data)
+    # Populate the form with the data from the request
+    form = TicketForm(data=snake_case_data)
+
+    # Then assign the CSRF token from the cookie
+    form.csrf_token.data = request.cookies.get("csrf_token")
 
     if form.validate():
-        new_ticket = Ticket(**form.data)
-
-        db.session.add(new_ticket)
-        try:
-            db.session.commit()
-            return jsonify({'message': 'Ticket created successfully', 'ticket_id': new_ticket.id}), 201
-        except IntegrityError:
-            db.session.rollback()
-            return jsonify({'message': 'Ticket creation failed'}), 400
-
+        ticket = Ticket(
+            heading=form.heading.data,
+            description=form.description.data,
+            user_id=form.user_id.data
+        )
+        db.session.add(ticket)
+        db.session.commit()
+        print('Email sent to client: Hello, a representive will be with you shortly, thank you for your patience')
+        return jsonify({'message': 'Ticket created successfully', 'ticket_id': ticket.id}), 201
     else:
-        return jsonify(form.errors), 400
+        print(form.errors)  # this is for debugging only, remove in production
+        return jsonify({'message': 'Ticket creation failed'}), 400
+
 
 # PUT route to revise ticket status (for admins only)
 @ticket_routes.route('/<int:ticketId>', methods=['PUT'])
@@ -80,6 +89,7 @@ def revise_ticket(ticketId):
 
     try:
         db.session.commit()
+        print('Email sent to client: ' + snake_case_data['status_summary'])
         return jsonify({'message': 'Ticket updated successfully'}), 200
     except IntegrityError:
         db.session.rollback()

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import './AdminTicketComponent.css'
-import AdminEditTicketModal from "./AdminEditTicketModal";
+import './TicketComponent.css'
+import EditTicketModal from "./EditTicketModal";
 import OpenModalButton from "../OpenModalButton";
 
 
-function AdminTicketComponent({ ticket, refreshTickets }) {
+function TicketComponent({ ticket, refreshTickets, user }) {
     const [showMenu, setShowMenu] = useState(false);
     const ulRef = useRef();
 
@@ -27,20 +27,25 @@ function AdminTicketComponent({ ticket, refreshTickets }) {
 
     return (
     <div className="admin_ticket">
-        <div>Ticket Id: {ticket.id}</div>
+        <div>Ticket Id: {ticket.ticket_id}</div>
+        <div>Updated At: {ticket.updated_at}</div>
+        <div>Created At: {ticket.created_at}</div>
         <div>Heading: {ticket.ticket_heading}</div>
         <div>Description: {ticket.ticket_description}</div>
         <div>User First Name: {ticket.user_first_name}</div>
         <div>User Last Name: {ticket.user_last_name}</div>
-        <div>User Email{ticket.user_email}</div>
-        <OpenModalButton
-                buttonText="Edit"
-                onItemClick={closeMenu}
-                modalComponent={<AdminEditTicketModal ticket={ticket} refreshTickets={refreshTickets} />}
-        />
+        <div>User Email: {ticket.user_email}</div>
+        <div>Status Update: {ticket.ticket_status_summary}</div>
+        {user.admin &&
+          <OpenModalButton
+                  buttonText="Process Ticket"
+                  onItemClick={closeMenu}
+                  modalComponent={<EditTicketModal ticket={ticket} refreshTickets={refreshTickets} />}
+          />
+        }
 
     </div>
   );
 }
 
-export default AdminTicketComponent;
+export default TicketComponent;

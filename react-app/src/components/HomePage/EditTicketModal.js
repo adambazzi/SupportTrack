@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { editTicket } from "../../store/tickets";
 import { useModal } from "../../context/Modal";
 
-function AdminEditTicketModal({ ticket, refreshTickets }) {
+function EditTicketModal({ ticket, refreshTickets }) {
   const [status, setStatus] = useState(ticket.ticket_status || 'Open');
   const [statusSummary, setStatusSummary] = useState(ticket.ticket_status_summary || '')
   const { closeModal } = useModal();
@@ -63,4 +63,4 @@ function AdminEditTicketModal({ ticket, refreshTickets }) {
   );
 }
 
-export default AdminEditTicketModal;
+export default EditTicketModal;

@@ -19,16 +19,15 @@ function CreateTicketModal({ user, refreshTickets }) {
     const data = {
       userId: user.id,
       heading,
-      description,
+      description
     }
 
     try {
       await createTicket(data);
-      refreshTickets();
+      await refreshTickets();
       closeModal();
     } catch (err) {
       console.error(err);
-      // handle error as needed
     }
   };
 
