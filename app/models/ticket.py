@@ -15,7 +15,7 @@ class Ticket(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     heading = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=False)
-    status = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(200), nullable=False, default='Open')
     status_summary = db.Column(db.String(500))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
