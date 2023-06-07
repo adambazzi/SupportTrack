@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { editTicket } from "../../store/tickets";
 import { useModal } from "../../context/Modal";
+import './EditTicketModal.css'
 
 function EditTicketModal({ ticket, refreshTickets }) {
   const [status, setStatus] = useState(ticket.ticket_status || 'Open');
@@ -43,7 +44,7 @@ function EditTicketModal({ ticket, refreshTickets }) {
             <option value="In Progress">In Progress</option>
             <option value="Closed">Completed</option>
         </select>
-      <input
+      <textarea
         type="text"
         value={statusSummary}
         onChange={(e) => setStatusSummary(e.target.value)}
