@@ -32,14 +32,14 @@ class User(db.Model, UserMixin):
     def password(self, password):
         """Set password to a hashed password."""
         # Password complexity check
-        pattern = re.compile(
-            r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-        )
-        if not pattern.match(password):
-            raise ValueError(
-                "Password must contain at least 8 characters, including an uppercase letter, "
-                "lowercase letter, a digit and a special character (@$!%*?&)."
-            )
+        # pattern = re.compile(
+        #     r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+        # )
+        # if not pattern.match(password):
+        #     raise ValueError(
+        #         "Password must contain at least 8 characters, including an uppercase letter, "
+        #         "lowercase letter, a digit and a special character (@$!%*?&)."
+        #     )
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
