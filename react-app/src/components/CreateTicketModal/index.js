@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createTicket } from "../../store/tickets";
 import { useModal } from "../../context/Modal";
+import './index.css'
 
 function CreateTicketModal({ user, refreshTickets }) {
   const [heading, setHeading] = useState('');
@@ -46,15 +47,15 @@ function CreateTicketModal({ user, refreshTickets }) {
           id="heading"
         />
         <label htmlFor="description">Description</label>
-        <input
-          type="text"
+        <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder='Description'
+          placeholder="Description"
           className="create-ticket_input"
           maxLength={500}
           id="description"
-        />
+        ></textarea>
+
         <button
           type="submit"
           className="create-ticket__button"

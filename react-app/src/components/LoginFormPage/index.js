@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../../store/session";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory, NavLink } from "react-router-dom";
 import './LoginForm.css';
 
 function LoginFormPage() {
@@ -10,6 +10,8 @@ function LoginFormPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
+  const history = useHistory()
+
 
   if (sessionUser) return <Redirect to="/" />;
 
@@ -20,6 +22,25 @@ function LoginFormPage() {
       setErrors(data);
     }
   };
+
+  const adminHandleSubmit = async (e) => {
+    e.preventDefault();
+    const data = await dispatch(login('admin@aa.io', 'password'));
+    if (data) {
+      setErrors(data);
+    } else {
+      history.push('/')
+    }
+  }
+  const userHandleSubmit = async (e) => {
+    e.preventDefault();
+    const data = await dispatch(login('user1@aa.io', 'password'));
+    if (data) {
+      setErrors(data);
+    } else {
+      history.push('/')
+    }
+  }
 
   return (
     <>
@@ -49,7 +70,12 @@ function LoginFormPage() {
           />
         </label>
         <button type="submit">Log In</button>
+        <div className="login_demoUser">
+          <button className="login-form__button__demoUser" onClick={adminHandleSubmit}>Log in as Admin</button>
+          <button className="login-form__button__demoUser" onClick={userHandleSubmit}>Log in as User</button>
+        </div>
       </form>
+      <div className="create-account__button-container">Not on SupportTrack? <NavLink to='/signup'>Create an account</NavLink></div>
     </>
   );
 }

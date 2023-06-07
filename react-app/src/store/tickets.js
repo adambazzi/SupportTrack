@@ -43,3 +43,14 @@ export const createTicket = async (data) => {
     const payload = await response.json();
     return payload
 }
+
+export const getUserTickets = async (userId) => {
+  const response = await fetch(`/api/tickets/user/${userId}`);
+
+  if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+
+  const payload = await response.json();
+  return payload;
+}

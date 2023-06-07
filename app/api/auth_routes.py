@@ -65,25 +65,31 @@ def sign_up():
     """
     Creates a new user and logs them in
     """
-    form = SignUpForm()
-
-    # Get the csrf_token from the request cookie and put it into the
-    # form manually to validate_on_submit can be used
-    form['csrf_token'].data = request.cookies['csrf_token']
-
-    # Convert keys from camelCase to snake_case
     data = request.get_json()
     snake_case_data = {camel_to_snake(k): v for k, v in data.items()}
+    form = SignUpForm(data = snake_case_data)
+    print(snake_case_data)
 
-    # Update form with the modified data
-    form = SignUpForm(data=snake_case_data)
+    form.csrf_token.data = request.cookies.get("csrf_token")
+
 
     if form.validate_on_submit():
-        user = User(**form.data)
+        user = User(
+            first_name = form.data['first_name'],
+            last_name = form.data['last_name'],
+            username = form.data['username'],
+            email = form.data['email'],
+            phone = form.data['phone'],
+            admin = form.data['admin'],
+            password = form.data['password']
+        )
         db.session.add(user)
         db.session.commit()
         login_user(user)
         return user.to_dict()
+    print(form.errors)
+
+
     return {'errors': validation_errors_to_error_messages(form.errors)}, 401
 
 

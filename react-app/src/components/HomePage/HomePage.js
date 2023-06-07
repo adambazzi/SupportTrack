@@ -5,6 +5,7 @@ import './HomePage.css'
 import CreateTicketModal from "../CreateTicketModal";
 import OpenModalButton from "../OpenModalButton";
 import { useSelector } from "react-redux";
+import { getUserTickets } from "../../store/tickets";
 
 function HomePage() {
   const [tickets, setTickets] = useState([]);
@@ -37,7 +38,8 @@ function HomePage() {
 
   const fetchData = async () => {
     try {
-      const data = await getTickets();
+      const userId = sessionUser.id
+      const data = sessionUser.admin ? await getTickets() : await getUserTickets(userId)
       setTickets(data);
       setOpenTickets(data.filter(el => el.ticket_status === 'Open'));
       setInProgressTickets(data.filter(el => el.ticket_status === 'In Progress'));
@@ -57,13 +59,15 @@ function HomePage() {
 
   return (
     <>
-      <div>
-        <OpenModalButton
-          buttonText="Create Ticket"
-          onItemClick={closeMenu}
-          modalComponent={<CreateTicketModal user={sessionUser} refreshTickets={fetchData}/>}
-        />
+      <div className="modal-button-container">
+          <OpenModalButton
+            buttonText="Create Ticket"
+            onItemClick={closeMenu}
+            modalComponent={<CreateTicketModal user={sessionUser} refreshTickets={fetchData}/>}
+            className="modal-button"
+          />
       </div>
+
       <div className="homePage__admin">
           <div className="button-group">
           <button

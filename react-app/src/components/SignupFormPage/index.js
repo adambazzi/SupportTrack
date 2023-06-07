@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { signUp } from "../../store/session";
-
+import './SignupForm.css'
 function SignupFormPage() {
   const dispatch = useDispatch();
   const sessionUser = useSelector((state) => state.session.user);
@@ -13,6 +13,7 @@ function SignupFormPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [admin, setAdmin] = useState(false)
   const [errors, setErrors] = useState([]);
 
 
@@ -25,7 +26,7 @@ function SignupFormPage() {
 
     if (password === confirmPassword) {
 
-        const data = await dispatch(signUp(username, firstName, lastName, email, password));
+        const data = await dispatch(signUp(username, firstName, lastName, email, phone, password, admin));
         if (data) {
           setErrors(data)
         }
@@ -38,9 +39,6 @@ function SignupFormPage() {
 
   return (
     <section className="signup__section">
-      <div className="signup__imageContainer">
-        <img src="https://cdn.robinhood.com/app_assets/odyssey/rockets.png" alt="Sign up image"></img>
-      </div>
       <form onSubmit={handleSubmit} className="signup-form">
         <h1 className="signup-form_title">Sign Up</h1>
         {/* <ul>
@@ -60,7 +58,7 @@ function SignupFormPage() {
           <input
             type="text"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone('+' + e.target.value)}
             className="signup-form__input"
           />
         </label>
@@ -109,9 +107,23 @@ function SignupFormPage() {
             className="signup-form__input"
           />
         </label>
+        <label className="signup-form__label">
+          <div className="signup-form__label_textContainer">
+            <div>Admin</div>
+          </div>
+          <select
+            value={admin}
+            onChange={(e) => setAdmin(e.target.value === "true")}
+            className="signup-form__input"
+          >
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </label>
         <div className="signup-form__buttons__container">
           <button type="submit" className="signup-form__button">Sign Up</button>
         </div>
+
       </form>
     </section>
   );

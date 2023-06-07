@@ -35,4 +35,5 @@ class SignUpForm(FlaskForm):
     )
     first_name = StringField('first_name', validators=[DataRequired(), Length(max=150)])
     last_name = StringField('last_name', validators=[DataRequired(), Length(max=150)])
-    phone = StringField('phone', validators=[DataRequired(), Length(max=255)])  # You might want to add phone number validation here
+    phone = StringField('phone', validators=[DataRequired(), Length(max=255)])
+    admin = BooleanField('admin')

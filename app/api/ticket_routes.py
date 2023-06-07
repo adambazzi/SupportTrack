@@ -17,7 +17,7 @@ ticket_routes = Blueprint('tickets', __name__)
 
 # GET route to retrieve all tickets and users
 @ticket_routes.route('/tickets-users', methods=['GET'])
-def get_ticket_user_info():
+def get_ticket_users_info():
     # Use joinedload() to perform an eager load of Job and Users
     result = db.session.query(Ticket).options(joinedload(Ticket.user)).order_by(Ticket.created_at.desc()).all()
 
@@ -41,7 +41,33 @@ def get_ticket_user_info():
 
     return jsonify(data), 200
 
-# POST route to create a new ticket
+
+# GET route to retrieve specific user tickets
+@ticket_routes.route('/user/<int:userId>', methods=['GET'])
+def get_ticket_user_info(userId):
+    # Use joinedload() to perform an eager load of Job and Users
+    result = db.session.query(Ticket).options(joinedload(Ticket.user)).filter(Ticket.user_id == userId).order_by(Ticket.created_at.desc()).all()
+
+    # Convert query result to list of dictionaries to make it serializable
+    data = []
+    for ticket in result:
+        ticket_data = {
+            'ticket_id': ticket.id,
+            'user_id': ticket.user_id,
+            'ticket_heading': ticket.heading,
+            'ticket_description': ticket.description,
+            'ticket_status': ticket.status,
+            'ticket_status_summary': ticket.status_summary,
+            'user_email': ticket.user.email,
+            'user_first_name': ticket.user.first_name,
+            'user_last_name': ticket.user.last_name,
+            'updated_at': ticket.updated_at,
+            'created_at': ticket.created_at
+        }
+        data.append(ticket_data)
+
+    return jsonify(data), 200
+
 # POST route to create a new ticket
 @ticket_routes.route('', methods=['POST'])
 def create_ticket():
