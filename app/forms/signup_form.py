@@ -23,16 +23,7 @@ def username_exists(form, field):
 class SignUpForm(FlaskForm):
     username = StringField('username', validators=[DataRequired(), username_exists, Length(max=40)])
     email = StringField('email', validators=[DataRequired(), user_exists])
-    password = PasswordField(
-    'password',
-    validators=[
-        DataRequired(),
-        Regexp(
-            r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            message="Password must contain at least 8 characters, including an uppercase letter, lowercase letter, a digit and a special character (@$!%*?&)."
-            )
-        ]
-    )
+    password = StringField('password', validators=[DataRequired()])
     first_name = StringField('first_name', validators=[DataRequired(), Length(max=150)])
     last_name = StringField('last_name', validators=[DataRequired(), Length(max=150)])
     phone = StringField('phone', validators=[DataRequired(), Length(max=255)])
