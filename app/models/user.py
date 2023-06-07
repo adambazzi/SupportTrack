@@ -22,12 +22,6 @@ class User(db.Model, UserMixin):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
-    # Unique constraints for email and phone
-    email_unique = db.UniqueConstraint('email')
-    phone_unique = db.UniqueConstraint('phone')
-
-
-
 
     @property
     def password(self):
