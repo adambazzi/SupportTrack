@@ -1,6 +1,6 @@
 from .db import db, environment, SCHEMA
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.schema import CheckConstraint
+# from sqlalchemy.schema import CheckConstraint
 from flask_login import UserMixin
 from sqlalchemy import text
 import re  # importing re module
@@ -22,20 +22,9 @@ class User(db.Model, UserMixin):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
-    # Check constraints for basic email and phone validation
-    # __table_args__ = (
-    #     CheckConstraint(text("email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
-    #     CheckConstraint(text("phone REGEXP '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
-    # )
-    # Check constraints for basic email and phone validation
-    # __table_args__ = (
-    #     CheckConstraint(text("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
-    #     CheckConstraint(text("phone ~* '^\\+\\d{1,3}\\s?\\d{1,14}(\\s?\\d{1,13})?'"), name='phone_check'),
-    # )
-    table_args = (
-        CheckConstraint(text("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$'"), name='email_check'),
-        CheckConstraint(text("phone ~* '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
-    )
+    # Unique constraints for email and phone
+    email_unique = db.UniqueConstraint('email')
+    phone_unique = db.UniqueConstraint('phone')
 
 
 
