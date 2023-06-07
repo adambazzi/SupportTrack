@@ -28,10 +28,16 @@ class User(db.Model, UserMixin):
     #     CheckConstraint(text("phone REGEXP '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
     # )
     # Check constraints for basic email and phone validation
-    __table_args__ = (
-        CheckConstraint(text("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
-        CheckConstraint(text("phone ~* '^\\+\\d{1,3}\\s?\\d{1,14}(\\s?\\d{1,13})?'"), name='phone_check'),
+    # __table_args__ = (
+    #     CheckConstraint(text("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"), name='email_check'),
+    #     CheckConstraint(text("phone ~* '^\\+\\d{1,3}\\s?\\d{1,14}(\\s?\\d{1,13})?'"), name='phone_check'),
+    # )
+    table_args = (
+        CheckConstraint(text("email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$'"), name='email_check'),
+        CheckConstraint(text("phone ~* '^\+\d{1,3}\s?\d{1,14}(\s?\d{1,13})?'"), name='phone_check'),
     )
+
+
 
 
     @property
